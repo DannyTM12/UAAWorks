@@ -1,0 +1,72 @@
+# UNIVERSIDAD AUTONOMA DE AGUASCALIENTES
+# Departamento: Ciencias de la Computación
+# Carrera: Ingeniería en Computación Inteligente
+
+## Curso: Machine y Deep Learning
+## Maestro: Dr. Francisco Javier Luna Rosas
+## Alumno: César Eduardo Elias del Hoyo
+
+### Semestre: Enero-Junio del 2026
+
+# Practica No. 31. Series de Tiempo
+
+### Hoy en día las organizaciones que utilizan internet requieren conocer el comportamiento futuro de ciertos fenómenos con el fin de planificar o prevenir, es decir, se utilizan ara predecir lo que ocurrirá con una varible en el futuro a partir del comportamiento de esa variable en el pasado
+
+### Se le llama series de tiempo a un conjunto de observaciones sobre valores que toma una variable (cuantitativa) en diferentes momentos en el tiempo. Una serie de tiempo es una colección o conjunto de mediciones de cierto fenómeno o experimento registrado secuencialmente en el tiempo, en forma equiespaciada (a intervalos de tiempo iguales)
+
+### En esta práctica implementaremos varias Series de Tiempo utilizando el DataSet StockData referente al mercado de valores (yahoo! finanzas: https://finance.yahoo.com/)
+
+---
+
+### Paso 1: Cargamos los datos del mercado de valores
+```{r}
+setwd("C:/Users/cesar/Desktop/UAA/10S/OPTATIVA II - Machine y Deep Learning/PRACTICAS DE CLASE - JUPYTER PYTHON")
+stock.data <- read.csv("stockdata.csv", header=T, dec=",", sep=";")
+head(stock.data)
+summary(stock.data)
+```
+
+### Paso 2: Graficamos series de tiempo para el volumen
+```{r}
+# Grafica series de tiempo para el volumen
+plot(stock.data[,5], type="l")
+```
+
+### Paso 3: Grafica de series de tiempo para el precio de cierre
+```{r}
+# Grafica series de tiempo para el precio de cierre
+plot(stock.data$close, type="l")
+```
+
+### Paso 4: Grafica de series de tiempo para el precio de apertura
+```{r}
+# Grafica series de tiempo para el precio de apertura
+# plot(stock.data[,2], type="o")
+plot(stock.data$open, type="o")
+```
+
+### Paso 5: Grafica de series de tiempo para el precio de mas bajo y alto (rojo)
+```{r}
+# Grafica series de tiempo para el precio mas bajo y alto (rojo)
+plot(stock.data$low, type="o")
+lines(stock.data$high, type="l", col="red")
+```
+
+### Paso 6: Grafica de series de tiempo para el precio de cierre con grafico alternativo
+```{r}
+# Grafica de series de tiempo para el precio de cierre con grafico alternativo
+plot(stock.data$close, type="l", lwd=2, col="red", xlab="time",
+ylab="closing values", main="STOCK DATA", ylim=c(0,60))
+```
+
+# CONCLUSIONES
+### En esta práctica implementamos varias Series de Tiempo utilizando el DataSet StockData referente al mercado de valores 
+
+## REFERENCIAS
+### [1] John Chambers (2008). Software for Data Analysis Programming with R. USA: Springer Verlag 2008.
+
+### [2] Jollife, I. T. (2002). Principal component analysis for special types of data (pp. 338-372). Springer New York.
+
+### [3] Reporte Técnico de PROMIDAT (2025). URL: https://promidat.com/ (Ultimo acceso mayo 2025)
+
+### [4] Yahoo Finanzas (2026). https://finance.yahoo.com/

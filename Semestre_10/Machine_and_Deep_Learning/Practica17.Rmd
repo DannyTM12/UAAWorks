@@ -1,0 +1,107 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+#### Universidad Autonoma de Aguascalientes
+#### Departamento: Ciencias de la computacion
+#### Carrera: Ingenieria en computacion Inteligente
+#### Curso: Machine y Deep Learning
+#### Maestro: DR. Francisco Javier Luna Rosas
+#### Alumno: Carlos Daniel Torres Macías
+#### Semestre: Enero_Junio 2026
+
+#### Practica #17: Implementar en R los Componentes Matematicos del Deep Learning
+
+#### Paso 1: Importar las librerias necesarias
+```{r}
+if (!requireNamespace("abind", quietly = TRUE)) {
+  install.packages("abind")
+}
+library(abind)
+```
+
+#### Paso 2: Escalares - Tensores OD
+#### Un escalar es un tensor de cero dimensiones. Contiene un único valor númerico
+```{r}
+escalar <- 2L
+cat("Valor del escalar:", escalar, "\n")
+cat("Clase:", class(escalar), "\n")
+cat("Dimensiones:", length(dim(escalar)), "(0D - ninguna dimensión)\n")
+```
+
+#### Paso 3: Vectores - Tensores 1D
+#### Un vector es un tensor de una dimensión (arreglo de escalares).
+```{r}
+vector_1d <- c(12L, 3L, 6L, 14L)
+cat("Tensor 1D (Vector):\n")
+print(vector_1d)
+cat("Clase:", class(vector_1d), "\n")
+cat("Dimensiones:", length(vector_1d), "(1D - una dimensión)\n")
+```
+
+#### Paso 4: Matrices - Tensores 2D
+#### Una matriz es un tensor de dos dimensiones (arreglo de vectores).
+```{r}
+tensor_2d <- matrix(
+  data = c(7L, 80L, 4L, 38L, 2L,
+           4L, 77L, 1L, 33L, 3L,
+           5L, 78L, 2L, 34L, 1L),
+  nrow = 3, ncol = 5,
+  byrow = TRUE
+)
+
+cat("Tensor 2D (Matriz) — shape (3 x 5):\n")
+print(tensor_2d)
+cat("\nClase      :", class(tensor_2d), "\n")
+cat("Dimensiones:", length(dim(tensor_2d)), "(2D)\n")
+cat("Shape      : (", dim(tensor_2d)[1], "x", dim(tensor_2d)[2], ")\n")
+```
+
+#### Paso 5: Tensores de Orden Superior (3D o más)
+#### Un tensor de orden superior tiene tres o más dimensiones. Por ejemplo, un tensor 3D puede representar una colección de matrices.
+```{r}
+capa <- c(7L, 80L, 4L, 38L, 2L,
+          4L, 77L, 1L, 33L, 3L,
+          5L, 78L, 2L, 34L, 1L)
+
+# array() en R llena por columna, dim = c(col, fila, profundidad) => transponer
+tensor_3d <- array(
+  data = rep(capa, 3),
+  dim  = c(5L, 3L, 3L)          # 5 cols, 3 rows, 3 slices
+)
+# Permutar para obtener shape (3, 3, 5) — igual al resultado de NumPy
+tensor_3d <- aperm(tensor_3d, c(3L, 2L, 1L))
+
+cat("Tensor 3D — shape (3 x 3 x 5):\n")
+print(tensor_3d)
+cat("\nClase      :", class(tensor_3d), "\n")
+cat("Dimensiones:", length(dim(tensor_3d)), "(3D)\n")
+cat("Shape      : (", paste(dim(tensor_3d), collapse=" x "), ")\n")
+```
+
+#### Paso 6: Tensores 4D o más
+#### Un tensor 4D puede representar una colección de tensores 3D, como un lote de imágenes.
+```{r}
+tensor_4d <- array(
+  data = rep(capa, 2 * 3),
+  dim  = c(5L, 3L, 3L, 2L)      # cols, rows, slices, bloques
+)
+tensor_4d <- aperm(tensor_4d, c(4L, 3L, 2L, 1L))
+
+cat("Tensor 4D — shape (2 x 3 x 3 x 5):\n")
+print(tensor_4d)
+cat("\nClase      :", class(tensor_4d), "\n")
+cat("Dimensiones: (ndim)", length(dim(tensor_4d)), "(4D)\n")
+cat("Shape      : (", paste(dim(tensor_4d), collapse=" x "), ")\n")
+```
+
+#### Conclusion
+#### En esta práctica hemos explorado los conceptos fundamentales de los tensores en el contexto del Deep Learning, 
+#### utilizando R para crear y manipular tensores de diferentes dimensiones. Hemos visto cómo los tensores pueden representar datos complejos, 
+#### desde simples escalares hasta estructuras multidimensionales que son esenciales para el procesamiento de datos en redes neuronales. 
+#### Esta comprensión es crucial para avanzar en el estudio y aplicación del Deep Learning en diversas áreas.
+
+#### Referencias
+#### [1] John Chambers. (2008). Software por Data Analysis Programming with R. USA: Springer Verlag 2008
+#### [2] Ian Goodfellow, Yoshua Bengio, Aaron Courville. (2016). Deep Learning. USA: MIT Press 2016
+#### [3] Francois Chollet. (2018). Deep Learning with Python. USA: Manning Publications 2018
