@@ -1,0 +1,79 @@
+#### Universidad Autonoma de Aguascalientes
+#### Departamento: Ciencias de la computacion
+#### Carrera: Ingenieria en computacion Inteligente
+#### Curso: Machine y Deep Learning
+#### Maestro: DR. Francisco Javier Luna Rosas
+#### Alumno: Carlos Daniel Torres Macias
+#### Semestre: Enero_Junio 2026
+#### Practica #33. Test de Normalidad y suavizado.
+#### Test de Normalidad
+#### Lo primero que se le debe hacer a una serie de tiempo, es el test de normalidad de los residuos (diferencias), que quiere decir esto, que los datos de los residuos (diferencias) siguen a una curva normal.
+
+## Paso 1. Cargar los datos del mercado de valores
+
+```{r}
+setwd("C:/Users/diego/Desktop/Machine y Deep Learning")
+stock.data <- read.csv("stockdata.csv", header = T, dec = ",", sep = ";")
+head(stock.data)
+summary(stock.data)
+```
+
+
+## Paso 2. Graficar la Serie de Tiempo, para verificar Posibles Atipisiedades.
+```{r}
+# Gráfica series de tiempo para el volumen
+plot(stock.data[,5], type="l")
+# Grafica series para el precio de cierre
+plot(stock.data$close, type = "l")
+```
+
+## Paso 3. Mostrar posibles anticidades de los datos
+```{r}
+plot(diff(stock.data$low), type = "l") # Muestra posibles atipicidades
+plot(diff(log(stock.data$low)), type = "l")
+```
+
+## Paso 4. En ocasiones se aplica un logaritmo para suavisar la serie
+```{r}
+plot(diff(log(stock.data$low)), type = "l")
+```
+
+## Paso 5. Probar el operador diff, para relizar test de normalidad de los residuos (diferencias)
+```{r}
+# El operador diff
+diff(1:10, 1)
+diff(c(9, 2, 3, 1, 6, 7), 1)
+```
+
+## Paso 6. Generar el Histograma
+```{r}
+hist(diff(stock.data$low), prob = T, ylim = c(0,0.6), xlim = c(-5, 5), col = "red")
+lines(density(diff(stock.data$low)), lwd = 2)
+
+mu <- mean(diff(stock.data$low))
+mu
+sigma <- sd(diff(stock.data$low))
+sigma
+x <- seq(-4, 4, length = 100)
+x
+y <- dnorm(x, mu, sigma)
+lines(x, y, lwd=2, col="blue")
+```
+
+## Paso 7. Aplicar filtro para Suavizado
+```{r}
+plot(stock.data[,5], type="l")
+st.1 <- filter(stock.data[,5], filter=rep(1/5,5))
+st.2 <- filter(stock.data[,5], filter=rep(1/25,25))
+st.3 <- filter(stock.data[,5], filter=rep(1/81,81))
+lines(st.1, col="red")
+lines(st.2, col="purple")
+lines(st.3, col="blue")
+```
+
+## Conclusiones
+### En esta practica implementamos varias series de tiempo utilizando el Dataset StockData.csv, referente al mercado de valores (yahoo finanzas).
+
+## Referencias
+### [1] John Chambers. (2008). Software for Data Analysis Programming with R. USA: Springer Verlag 2008.
+### [2] Jolliffe, I. T. (2002). Principal component analysis for special types of data (pp. 338-372). Springer New York.
