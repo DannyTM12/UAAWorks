@@ -1,0 +1,163 @@
+# UNIVERSIDAD AUTONOMA DE AGUASCALIENTES
+# Departamento: Ciencias de la Computación
+# Carrera: Ingeniería en Computación Inteligente
+
+## Curso: Machine y Deep Learning
+## Maestro: Dr. Francisco Javier Luna Rosas
+## Alumno: Carlos Daniel Torres Macias
+
+### Semestre: Enero-Junio del 2026
+
+PRACTICA NO. 35. COMPONTES DE LAS SERIES DE TIEMPO (TENDENCIA, CICLICIDAD, ESTACIONALIDAD Y MOVIMIENTO ALEATORIO) Y REGRESIÓN LINEAL PARA OBSERVAR LA TENDENCIA.
+
+# 1.- TEST DE NORMALIDAD
+### Lo primero que se le debe hacer a una serie de normalidad de los residuos (difencias), que quiere decir esto, que los datos de los residuos (diferencias) siguen a una curva normal 
+
+---
+### Paso 1: Cargamos los datos del mercado de valores
+```{r}
+setwd("C:/Users/daniel/Desktop/Machine y Deep Learning")
+stock.data <- read.csv("stockdata.csv", header=T, dec=",", sep=";")
+head(stock.data)
+dim(stock.data)
+summary(stock.data)
+```
+
+### Paso 2: Graficar la serie de tiempo para verificar posibles atipisidades
+```{r}
+# Gráfica series de tiempo para el volumen
+plot(stock.data[,5], type="l")
+# Gráfica series ed tiempo para el precio de cierre
+plot(stock.data$close, type="l")
+```
+
+### Paso 3: Mostrar posibles atipisidades de los datos
+```{r}
+plot(diff(stock.data$low), type="l") # Muestra posibles atipisidades
+```
+
+### Paso 4: En ocasiones se aplica un logaritmo para suavizar la serie
+```{r}
+plot(diff(log(stock.data$low)), type="l")
+```
+
+### Paso 5: Probar el operador diff, para realizar test de normalidad de los residuos (diferencias)
+```{r}
+# Operador diff
+diff(1:10, 1)
+diff(c(9, 2, 3, 1, 6, 7), 1)
+```
+
+### Paso 6: Generar el Histograma
+```{r}
+hist(diff(stock.data$low), prob=T, ylim=c(0,0.6), xlim=c(-5,5), col="red")
+lines(density(diff(stock.data$low)), lwd=2)
+
+mu <- mean(diff(stock.data$low))
+mu
+sigma <- sd(diff(stock.data$low))
+sigma
+x <- seq(-4, 4, length=100)
+x
+y <- dnorm(x, mu, sigma)
+lines(x, y, lwd=2, col="blue")
+```
+
+# 2.- MEDIAS MÓVILES
+### Paso 7: Aplicar el filtro de medias moviles, para Suavizar la serie
+```{r}
+# Suavizado lineal (promedio moviles)
+setwd("C:/Users/daniel/Desktop/Machine y Deep Learning")
+plot(stock.data[,5], type="l")
+st.1 <- filter(stock.data[,5], filter=rep(1/5, 5))
+st.2 <- filter(stock.data[,5], filter=rep(1/25, 25))
+st.3 <- filter(stock.data[,5], filter=rep(1/81, 81))
+lines(st.1, col="red")
+lines(st.2, col="blue")
+lines(st.3, col="purple")
+```
+
+# 3.- COMPONENTES DE LA SERIE DE TIEMPO (TENDENCIA, CICLO, ESTACIONALIDAD Y MOVIMIENTO ALEATORIO)
+
+## Series de Tiempo. Análisis preliminar de una serie de tiempo. El tercer análisis que se debe de hacer es observar sus componentes (Tendencia, Ciclo, Estacionalidad Y Movimiento Aleatorio)
+
+### Ejemplo 1. Tomamos la serie de tiempo de Ventas de Cerveza en Australia. ¿Cuáles han sido las ventas de cerveza de Jan. 1956 a Aug. 1995?
+```{r}
+# Series de tiempo 
+setwd("C:/Users/daniel/Desktop/Machine y Deep Learning")
+beer <- read.csv("beer.csv", header=T, dec=",", sep=";")
+head(beer)
+dim(beer)
+beer <- ts(beer[,1], start=1956, freq=12)
+head(beer)
+beer
+plot(beer)
+# stl logra la descomposicion
+s <- stl(beer, s.window="periodic")
+# El valor de la serie de tiempo es igual = seasonal + trend + reminder
+# En este caso Jan = 32.
+s$time.series
+s$deg
+plot(stl(beer, s.window="periodic"))
+```
+
+### Ejemplo 2. Acciones de CISCO REFERENTES AL DJ
+## NOTA. Esta serie de tiempo no funciona por ser una serie de tiempo muy corta
+```{r}
+#setwd("C:/Users/daniel/Desktop/Machine y Deep Learning")
+#DJData <- read.csv("DJTable.csv", header=T, dec=".", sep=";", row.names=1)
+#dim(DJData)
+#head(DJData)
+#csco <- ts(rev(DJData$csco), start = c(2010,2), frecuency = 365)
+#csco
+#plot(csco, type = 'o')
+#s <- stl(csco, s.window="periodic")
+```
+
+
+# 4.- TENDENCIA DE LA SERIE DE TIEMPO
+
+```{r}
+# Ejemplos con los datos de cancer de prostata
+#setwd("C:/Users/daniel/Desktop/Machine y Deep Learning")
+#PDatos <- read.csv("prostata.csv", header=TRUE, dec=",", sep=";")
+#head(PDatos)
+# La variable que mejor se correlaciona con lpsa es lcavol ya que es la que tiene la mas alta correlación
+
+#cor(PDatos)
+# predecimos lpsa en función lcalvol
+
+#modelo <- lm(lpsa~lcavol, data = PDatos)
+#modelo
+#plot(PDatos$lcaol, PDatos$lpsa, col="red")
+#abline(modelo, col="blue")
+
+# Un ejemplo para ilustrar la Necesidadde usar Regresión
+
+setwd("C:/Users/daniel/Desktop/Machine y Deep Learning")
+beer <- read.csv("beer.csv", header=T, dec=",", sep=";")
+dim(beer)
+
+beer <- beer[,1]
+length(beer)
+lbeer <- log(beer)
+t <- seq(1956, 1955.2, length=length(beer))
+t
+plot(t, lbeer, type="o")
+
+# Hacemos una regresión para mostrar la tendencia que sigue de las ventas de cerveza en Australia
+# (lñinea roja) y observamos en la figura que las ventas de cerveza tienen una tendencia de crecimiento
+
+# aunque al final decrecce un poco
+plot(t, lbeer, type="o")
+## Agregamos una Regresión al Modelo
+t2 <- t^2
+lines(t, lm(lbeer~t+t2)$fit, col=2, lwd=2)
+```
+
+## Conclusiones
+### En esta practica implementamos varias series de tiempo utilizando el Dataset StockData.csv, referente al mercado de valores (yahoo finanzas). Opteniendo los componentes de las series de tiempo y regresión lineal para observar la tendencia
+
+## Referencias
+### [1] John Chambers. (2008). Software for Data Analysis Programming with R. USA: Springer Verlag 2008.
+### [2] Jolliffe, I. T. (2002). Principal component analysis for special types of data (pp. 338-372). Springer New York.
